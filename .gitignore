@@ -15,6 +15,9 @@ wheels/
 .mypy_cache/
 .pytest_cache/
 
+# TensorBoard
+runs/
+
 # IDE
 .idea/
 *.swp

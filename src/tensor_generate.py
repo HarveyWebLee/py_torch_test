@@ -1,7 +1,15 @@
-import torch
+from pathlib import Path
 
-# 确保CUDA可用
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+import torch
+from torch.utils.tensorboard.writer import SummaryWriter
+
+# 确保 CUDA / MPS 可用，否则回退 CPU
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+elif torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")
 
 # 生成数据
 inputs = torch.rand(
@@ -13,7 +21,10 @@ targets = (
     inputs @ weights + bias + 0.1 * torch.randn(100, 1)
 )  # 增加一些误差，模拟真实情况
 
-# 初始化参数时直接放在CUDA上，并启用梯度追踪
+log_dir = Path(__file__).resolve().parents[1] / "runs" / "lr"
+writer = SummaryWriter(log_dir=str(log_dir))
+
+# 初始化参数时直接放在加速设备上，并启用梯度追踪
 w = torch.rand((3, 1), requires_grad=True, device=device)
 b = torch.rand((1,), requires_grad=True, device=device)
 
@@ -25,10 +36,12 @@ targets = targets.to(device)
 epoch = 10000
 lr = 0.003
 
-for _ in range(epoch):
+for i in range(epoch):
     outputs = inputs @ w + b
     loss = torch.mean(torch.square(outputs - targets))
     print("loss:", loss.item())
+    # 记录 loss：标签、值、步数
+    writer.add_scalar("loss/train", loss.item(), i)
 
     loss.backward()
     w_grad = w.grad
@@ -43,5 +56,9 @@ for _ in range(epoch):
     w_grad.zero_()
     b_grad.zero_()
 
+writer.close()
+
 print("训练后的权重 w:", w)
 print("训练后的偏置 b:", b)
+print(f"TensorBoard 日志目录: {log_dir}")
+print(f"查看曲线: uv run tensorboard --logdir={log_dir}")
