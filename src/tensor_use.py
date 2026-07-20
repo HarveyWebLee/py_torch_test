@@ -2,33 +2,49 @@ import time
 
 import torch
 
-# 确保 GPU 可用
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+def select_device() -> torch.device:
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
+
+
+def synchronize(device: torch.device) -> None:
+    if device.type == "cuda":
+        torch.cuda.synchronize()
+    elif device.type == "mps":
+        torch.mps.synchronize()
+
+
+device = select_device()
 print(f"Using device: {device}")
 
-# 生成随机矩阵
-size = 10000  # 矩阵大小
-A_cpu = torch.rand(size, size)  # 默认在CPU上创建tensor
+size = 10000
+A_cpu = torch.rand(size, size)
 B_cpu = torch.rand(size, size)
 
 start_cpu = time.time()
-C_cpu = torch.mm(A_cpu, B_cpu)  # 矩阵乘法
+_ = torch.mm(A_cpu, B_cpu)
 end_cpu = time.time()
 cpu_time = end_cpu - start_cpu
 
-# 在 GPU 上计算
-A_gpu = A_cpu.to(device)  # 将tensor转移到GPU上
-B_gpu = B_cpu.to(device)
-
-start_gpu = time.time()
-C_gpu = torch.mm(A_gpu, B_gpu)
-if device.type == "cuda":
-    torch.cuda.synchronize()  # 仅在 CUDA 可用时同步
-end_gpu = time.time()
-gpu_time = end_gpu - start_gpu
-
 print(f"CPU time: {cpu_time:.6f} sec")
-if torch.cuda.is_available():
-    print(f"GPU time: {gpu_time:.6f} sec")
+
+if device.type == "cpu":
+    print("Accelerator not available, skipping GPU/MPS test.")
 else:
-    print("GPU not available, skipping GPU test.")
+    A_acc = A_cpu.to(device)
+    B_acc = B_cpu.to(device)
+    # 预热，避免首次 kernel 编译影响计时
+    _ = torch.mm(A_acc, B_acc)
+    synchronize(device)
+
+    start_acc = time.time()
+    _ = torch.mm(A_acc, B_acc)
+    synchronize(device)
+    end_acc = time.time()
+    acc_time = end_acc - start_acc
+
+    print(f"{device.type.upper()} time: {acc_time:.6f} sec")

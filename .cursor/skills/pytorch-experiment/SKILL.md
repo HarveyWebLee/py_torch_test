@@ -19,15 +19,22 @@ uv run python src/tensor_tidu.py
 ```python
 import torch
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+elif torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")
 tensor = torch.rand(3, 3, device=device)
 ```
 
-## GPU 计时
+## GPU / MPS 计时
 
 ```python
 if device.type == "cuda":
     torch.cuda.synchronize()
+elif device.type == "mps":
+    torch.mps.synchronize()
 ```
 
 ## 可选依赖

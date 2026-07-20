@@ -7,7 +7,7 @@ alwaysApply: false
 # PyTorch 约定
 
 - 张量创建后显式 `.to(device)`，不假设默认在 GPU
-- GPU 计时代码在 `torch.cuda.is_available()` 时调用 `torch.cuda.synchronize()`
+- 设备优先级：CUDA → MPS → CPU；计时时 CUDA 用 `torch.cuda.synchronize()`，MPS 用 `torch.mps.synchronize()`
 - 需要梯度的张量用 `requires_grad=True`；反向传播用 `loss.backward()`
 - 大矩阵实验注意内存；可用较小 `size` 做冒烟测试
 - 实验脚本可直接 `python src/xxx.py` 或 `uv run python src/xxx.py`

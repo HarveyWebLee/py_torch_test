@@ -14,10 +14,23 @@ name = "pytorch-cu121"
 url = "https://download.pytorch.org/whl/cu121"
 explicit = true
 
+# macOS 无 CUDA wheel，仅 Linux/Windows 走 cu121；darwin 回退 PyPI（含 MPS）
 [tool.uv.sources]
-torch = { index = "pytorch-cu121" }
-torchvision = { index = "pytorch-cu121" }
-torchaudio = { index = "pytorch-cu121" }
+torch = [
+    { index = "pytorch-cu121", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+torchvision = [
+    { index = "pytorch-cu121", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+torchaudio = [
+    { index = "pytorch-cu121", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+[tool.uv]
+required-environments = [
+    "sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+]
 
 [dependency-groups]
 audio = [

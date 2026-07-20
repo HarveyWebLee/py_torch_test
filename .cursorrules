@@ -1,0 +1,30 @@
+# SCM「生成提交信息」专用规则
+# 说明：Cursor Source Control 的 Generate Commit Message 目前不读取
+# Settings → User Rules 与 .cursor/rules；需靠仓库根目录本文件生效。
+
+## Git Commit Message
+
+当 Cursor 自动生成 Git 提交信息时，必须遵守：
+
+1. 使用 Conventional Commits（Angular）格式：`<type>(<scope>): <subject>`
+2. `type` 仅限：feat | fix | docs | style | refactor | perf | test | build | ci | chore | revert
+3. `subject` **必须使用简体中文**（专有名词可保留英文），祈使语气，不超过 72 字符，句末不加句号
+4. 正文若需要，也使用简体中文
+5. 一条提交只描述一件事；禁止纯英文 subject，禁止 “update”“fix bug”“临时提交” 等含糊信息
+
+正确示例：
+
+```
+feat(device): 增强设备选择并补充 CUDA/MPS 可用性检测
+fix(main): 修复无 GPU 时的设备回退逻辑
+refactor(tensor): 简化矩阵乘法计时流程
+chore(deps): 调整 pyproject 条件依赖声明
+```
+
+错误示例（禁止）：
+
+```
+refactor: enhance device selection and CUDA/MPS support
+fix bug
+update code
+```

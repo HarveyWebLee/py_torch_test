@@ -1,5 +1,5 @@
 ---
-description: Git 提交信息规范（Conventional Commits 中文）
+description: Git 提交信息规范（Conventional Commits 中文）；Agent 写 commit 与讨论提交时使用
 alwaysApply: true
 ---
 
@@ -11,7 +11,8 @@ alwaysApply: true
 
 **要求**：
 
-- subject 使用中文、祈使语气、不超过 72 字符、句末不加句号
+- subject **必须简体中文**、祈使语气、不超过 72 字符、句末不加句号
+- 禁止英文 subject（专有名词除外）
 - 仅在用户明确要求时执行 commit
 - 提交前确保 `ruff` 与 `pyright` 通过
 
@@ -22,3 +23,5 @@ feat(tensor): 添加 GPU 矩阵乘法性能对比脚本
 fix(main): 修复无 CUDA 时的设备检测逻辑
 chore(deps): 升级 ruff 到 0.9
 ```
+
+> Source Control 面板的「生成提交信息」按钮另依赖仓库根目录 `.cursorrules`，不读取本文件。
