@@ -15,29 +15,34 @@
 ## 常用命令
 
 ```bash
-# 安装依赖（含 dev 工具）
-uv sync --group dev
+# 安装依赖
+uv sync                 # 主依赖：torch / torchvision / tensorboard
+uv sync --group dev     # 开发工具：ruff / pyright / pre-commit
+uv sync --group audio   # 可选：torchaudio
 
 # 运行入口
 uv run python main.py
 
 # 实验脚本
-uv run python src/tensor_use.py
-uv run python src/tensor_tidu.py
+uv run python src/tensor_use.py            # CPU vs GPU 矩阵乘法
+uv run python src/tensor_tidu.py           # 自动微分
+uv run python src/tensor_generate.py       # 线性回归，日志 → runs/lr
+uv run python src/tensor_normalization.py  # 归一化对比，日志 → runs/normalization
 
-# 格式化
+# 查看 Loss 曲线（Windows 避免默认 6006：该端口常被系统保留）
+uv run tensorboard --logdir=runs --host 127.0.0.1 --port 6806
+
+# 格式化 / Lint / 类型检查
 uv run ruff format .
-
-# Lint
 uv run ruff check .
 uv run ruff check --fix .
-
-# 类型检查
 uv run pyright
 
 # 一键质量检查
 uv run ruff format --check . && uv run ruff check . && uv run pyright
 ```
+
+更多说明见 [README.md](README.md)。
 
 ## 开发工作流
 
@@ -58,18 +63,21 @@ uv run ruff format --check . && uv run ruff check . && uv run pyright
 
 ```
 py_torch_test/
-├── main.py              # 入口：检查 PyTorch / CUDA
+├── main.py                     # 入口：检查 PyTorch / CUDA
 ├── src/
-│   ├── tensor_use.py    # GPU vs CPU 矩阵乘法
-│   └── tensor_tidu.py   # 自动微分示例
+│   ├── tensor_use.py           # GPU vs CPU 矩阵乘法
+│   ├── tensor_tidu.py          # 自动微分示例
+│   ├── tensor_generate.py      # 线性回归 + TensorBoard（runs/lr）
+│   └── tensor_normalization.py # 归一化对比 + TensorBoard（runs/normalization）
+├── runs/                       # TensorBoard 事件文件（本地生成，勿提交）
 ├── .cursor/
-│   ├── rules/           # Cursor 规则（.mdc）
-│   ├── skills/          # Agent 技能
-│   ├── hooks/           # Cursor 钩子脚本
-│   ├── hooks.json       # 钩子配置
-│   └── mcp.json         # MCP 服务器配置
-├── AGENTS.md            # 本文件
-└── pyproject.toml       # 依赖与工具配置
+│   ├── rules/                  # Cursor 规则（.mdc）
+│   ├── skills/                 # Agent 技能
+│   ├── hooks/                  # Cursor 钩子脚本
+│   ├── hooks.json              # 钩子配置
+│   └── mcp.json                # MCP 服务器配置
+├── AGENTS.md                   # 本文件
+└── pyproject.toml              # 依赖与工具配置
 ```
 
 ## Git 提交规范

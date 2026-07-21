@@ -3,20 +3,20 @@
   "hooks": {
     "afterFileEdit": [
       {
-        "command": ".cursor/hooks/format-python.sh",
+        "command": "bash .cursor/hooks/format-python.sh",
         "matcher": "Write|StrReplace|EditNotebook"
       }
     ],
     "beforeShellExecution": [
       {
-        "command": ".cursor/hooks/guard-destructive-git.sh",
+        "command": "bash .cursor/hooks/guard-destructive-git.sh",
         "matcher": "git push --force|git reset --hard|git clean -f",
         "failClosed": false
       }
     ],
     "sessionStart": [
       {
-        "command": ".cursor/hooks/session-context.sh"
+        "command": "bash .cursor/hooks/session-context.sh"
       }
     ]
   }
