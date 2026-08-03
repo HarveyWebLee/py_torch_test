@@ -5,6 +5,7 @@ description = "PyTorch 学习与实验项目"
 readme = "README.md"
 requires-python = "==3.10.20"
 dependencies = [
+    "pandas>=2.2.0",
     "tensorboard>=2.21.0",
     "torch==2.5.1",
     "torchvision==0.20.1",
