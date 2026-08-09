@@ -112,6 +112,15 @@ class TitanicDataset(Dataset):
 # 数据与模型准备
 # ---------------------------------------------------------------------------
 
+# 设备选择：CUDA → Apple MPS → CPU，保证无 GPU 时也能运行
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+elif torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")
+print(f"Using {device} device")
+
 # 项目根目录下的 dataset/（绝对路径，不依赖当前工作目录）
 DATA_DIR = Path(__file__).resolve().parents[2] / "dataset"
 train_dataset = TitanicDataset(DATA_DIR / "train.csv")
@@ -119,7 +128,7 @@ validation_dataset = TitanicDataset(DATA_DIR / "validation.csv")
 
 # 输入维度由训练集特征列数决定
 model = LogisticRegressionModel(train_dataset.feature_size)
-model.to("cuda")  # 将参数与缓冲区搬到 GPU（需本机有可用 CUDA）
+model.to(device)  # 将参数与缓冲区搬到选定设备
 model.train()  # 训练模式（对本模型影响很小，主要是习惯写法）
 
 # 随机梯度下降；lr=0.1 对已标准化特征通常较合适
@@ -138,8 +147,8 @@ for epoch in range(epochs):
     # shuffle=True：每个 epoch 打乱样本顺序，减轻顺序偏差
     for features, labels in DataLoader(train_dataset, batch_size=256, shuffle=True):
         step += 1
-        features = features.to("cuda")
-        labels = labels.to("cuda")
+        features = features.to(device)
+        labels = labels.to(device)
 
         # 清空上一轮残留梯度，否则会累加到当前 batch
         optimizer.zero_grad()
@@ -169,8 +178,8 @@ model.eval()  # 评估模式
 with torch.no_grad():  # 不建计算图，省显存、加快推理
     correct = 0
     for features, labels in DataLoader(validation_dataset, batch_size=256):
-        features = features.to("cuda")
-        labels = labels.to("cuda")
+        features = features.to(device)
+        labels = labels.to(device)
         outputs = model(features).squeeze()
         correct += torch.sum((outputs >= 0.5) == labels)
     # 验证准确率：未见过的数据上的分类正确率（更反映泛化能力）

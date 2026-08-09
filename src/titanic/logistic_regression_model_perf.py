@@ -170,13 +170,22 @@ class TitanicDataset(Dataset):
 # 数据与模型准备
 # ---------------------------------------------------------------------------
 
+# 设备选择：CUDA → Apple MPS → CPU，保证无 GPU 时也能运行
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+elif torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")
+print(f"Using {device} device")
+
 DATA_DIR = Path(__file__).resolve().parents[2] / "dataset"
 train_dataset = TitanicDataset(DATA_DIR / "train.csv")
 validation_dataset = TitanicDataset(DATA_DIR / "validation.csv")
 
 # 输入维 = 原始特征 + Embarked 独热 + 全部交叉项
 model = LogisticRegressionModel(train_dataset.feature_size)
-model.to("cuda")
+model.to(device)
 model.train()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
@@ -193,8 +202,8 @@ for epoch in range(epochs):
 
     for features, labels in DataLoader(train_dataset, batch_size=256, shuffle=True):
         step += 1
-        features = features.to("cuda")
-        labels = labels.to("cuda")
+        features = features.to(device)
+        labels = labels.to(device)
 
         optimizer.zero_grad()
         outputs = model(features).squeeze()
@@ -217,8 +226,8 @@ model.eval()
 with torch.no_grad():
     correct = 0
     for features, labels in DataLoader(validation_dataset, batch_size=256):
-        features = features.to("cuda")
-        labels = labels.to("cuda")
+        features = features.to(device)
+        labels = labels.to(device)
         outputs = model(features).squeeze()
         correct += torch.sum((outputs >= 0.5) == labels)
     print(f"Validation Accuracy: {correct / len(validation_dataset)}")

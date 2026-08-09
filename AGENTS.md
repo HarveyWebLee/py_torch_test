@@ -7,8 +7,8 @@
 | 项     | 值                                 |
 | ------ | ---------------------------------- |
 | 语言   | Python 3.10.20                     |
-| 框架   | PyTorch 2.5.1 + torchvision 0.20.1 |
-| CUDA   | 12.1（可选，需 NVIDIA GPU）        |
+| 框架   | PyTorch 2.11.0 + torchvision 0.26.0 |
+| CUDA   | 12.9（可选，需 NVIDIA GPU）         |
 | 包管理 | [uv](https://docs.astral.sh/uv/)   |
 | 源码   | `main.py`、`src/`                  |
 
