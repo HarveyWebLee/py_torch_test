@@ -21,3 +21,6 @@ runs/
 # IDE
 .idea/
 *.swp
+
+# Data
+data/

@@ -1,6 +1,6 @@
 # py-torch-test
 
-PyTorch 学习与实验项目，使用 uv 管理 Python 3.10.20 环境与 CUDA 12.1 版 PyTorch。
+PyTorch 学习与实验项目，使用 uv 管理 Python 3.10.20 环境与 CUDA 12.9 版 PyTorch。
 
 ## 快速开始
 
@@ -17,7 +17,7 @@ uv run python main.py
 | `uv sync --group dev`   | 额外安装开发工具（ruff、pyright、pre-commit） |
 | `uv sync --group audio` | 额外安装 torchaudio                           |
 
-Linux / Windows 上 `torch` / `torchvision` 从 CUDA 12.1 源安装；macOS 走 PyPI（含 MPS）。
+Linux / Windows 上 `torch` / `torchvision` 从 CUDA 12.9 源安装；macOS 走 PyPI（含 MPS）。
 
 ## 开发命令
 

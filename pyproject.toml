@@ -7,25 +7,25 @@ requires-python = "==3.10.20"
 dependencies = [
     "pandas>=2.2.0",
     "tensorboard>=2.21.0",
-    "torch==2.5.1",
-    "torchvision==0.20.1",
+    "torch==2.11.0",
+    "torchvision==0.26.0",
 ]
 
 [[tool.uv.index]]
-name = "pytorch-cu121"
-url = "https://download.pytorch.org/whl/cu121"
+name = "pytorch-cu129"
+url = "https://download.pytorch.org/whl/cu129"
 explicit = true
 
-# macOS 无 CUDA wheel，仅 Linux/Windows 走 cu121；darwin 回退 PyPI（含 MPS）
+# macOS 无 CUDA wheel，仅 Linux/Windows 走 cu129；darwin 回退 PyPI（含 MPS）
 [tool.uv.sources]
 torch = [
-    { index = "pytorch-cu121", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { index = "pytorch-cu129", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
 torchvision = [
-    { index = "pytorch-cu121", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { index = "pytorch-cu129", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
 torchaudio = [
-    { index = "pytorch-cu121", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { index = "pytorch-cu129", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
 ]
 
 [tool.uv]
@@ -35,8 +35,9 @@ required-environments = [
 ]
 
 [dependency-groups]
+# 与主依赖版本严格配对：torch 2.11.0 / torchvision 0.26.0 / torchaudio 2.11.0
 audio = [
-    "torchaudio==2.5.1",
+    "torchaudio==2.11.0",
 ]
 dev = [
     "ruff>=0.9.0",
@@ -74,6 +75,9 @@ line-ending = "auto"
 
 [tool.pyright]
 pythonVersion = "3.10"
+# 显式指向 uv 虚拟环境，避免 IDE/插件未激活环境时报 reportMissingImports
+venvPath = "."
+venv = ".venv"
 include = ["src", "main.py"]
 exclude = [".venv", "**/__pycache__"]
 typeCheckingMode = "basic"
