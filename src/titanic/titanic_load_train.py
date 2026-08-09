@@ -1,6 +1,7 @@
-from torch.utils.data import DataLoader
-from titanic_dataset import TitanicDataset
 from pathlib import Path
+
+from titanic_dataset import TitanicDataset
+from torch.utils.data import DataLoader
 
 DATA_PATH = Path(__file__).resolve().parents[2] / "dataset" / "train.csv"
 dataset = TitanicDataset(DATA_PATH)

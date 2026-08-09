@@ -156,10 +156,10 @@ class TitanicDataset(Dataset):
         """样本总数。"""
         return len(self.data)
 
-    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
         """返回 (全部特征含交叉项, Survived 标签)。"""
-        features = self.data.drop(columns=["Survived"]).iloc[idx].values
-        label = self.data["Survived"].iloc[idx]
+        features = self.data.drop(columns=["Survived"]).iloc[index].values
+        label = self.data["Survived"].iloc[index]
         return (
             torch.tensor(features, dtype=torch.float32),
             torch.tensor(label, dtype=torch.float32),

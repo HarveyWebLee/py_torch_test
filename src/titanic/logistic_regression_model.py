@@ -98,10 +98,10 @@ class TitanicDataset(Dataset):
         """样本总数，供 DataLoader 计算 epoch 长度。"""
         return len(self.data)
 
-    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
         """按索引返回单条样本：(特征向量, 是否生还标签)。"""
-        features = self.data.drop(columns=["Survived"]).iloc[idx].values
-        label = self.data["Survived"].iloc[idx]
+        features = self.data.drop(columns=["Survived"]).iloc[index].values
+        label = self.data["Survived"].iloc[index]
         return (
             torch.tensor(features, dtype=torch.float32),
             torch.tensor(label, dtype=torch.float32),
